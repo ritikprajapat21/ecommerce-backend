@@ -21,9 +21,18 @@ export const addOrder = async (req, res) => {
 
 export const getOrderById = async (req, res) => {
   try {
-    const user = req.userId;
+    const userId = req.userId;
+    const user = await User.findById(new mongoose.Types.ObjectId(userId));
 
-    const orders = await Order.find({ user })
+    if (user.role != "admin") {
+      throw new Error("You don't have permission");
+    }
+
+    const { customerId } = req.params;
+
+    const orders = await Order.find({
+      user: new mongoose.Types.ObjectId(customerId),
+    })
       .populate("user", "-password")
       .exec();
 

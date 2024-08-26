@@ -23,6 +23,10 @@ export const createCart = async (req, res) => {
     const { items } = req.body;
     const user = req.userId;
     const products = items.map((item) => {
+      if (!item.productId) {
+        throw new Error("Product Id is required");
+      }
+
       return {
         product_id: new mongoose.Types.ObjectId(item.productId),
         quantity: item.quantity,
